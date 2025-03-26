@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang='ru'>
+<head>
+  <meta charset='UTF-8'>
+  <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+  <link rel='icon' type='image/x-icon' href='images/favicon.ico'>
+  <link type='text/css' rel='stylesheet' href='css/fonts.css'>
+  <link type='text/css' rel='stylesheet' href='css/styles.css'>
+  
+  <title>Смена пароля пользователя</title>
+</head>
+
+
+
+<body>
+  <main class='content'>
+    <form id='auth-form' method="post" class='auth-form' action="/chpass" onsubmit="return validatePasswords();">
+      <div class='logo'>
+          <img src='/css/logo-icon.svg' alt="logo-img">
+        <span class='logo__text'>Смена пароля пользователя</span>
+      </div>
+      <div class='inputs'>
+          <div class='inputs__password'>
+          <label for='old_password' class='label'>Старый пароль:</label>
+          <input id="old_password" required type='password' name='old_password' class='input' wfd-id="id2">
+        </div>
+	  <div class='inputs__password'>
+          <label for='password' class='label'>Новый пароль:</label>
+          <input id="password" required type='password' name='password' class='input' wfd-id="id2">
+        </div>
+		<div class='inputs__password'>
+          <label for='password' class='label'>Подвердите новый пароль:</label>
+          <input id="password_chek" required  type='password' name='password_chek' class='input' wfd-id="id3">
+        </div>
+      </div>
+      <div id='actions' class='actions'>
+        <p id='err-msg' class='err-msg'></p>
+        <div class='loader'>
+          <div class='lds-ring'>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+          </div>
+        </div>
+        <button disabled type='submit' class='submit-btn'>Сменить</button>
+      </div>
+    </form>
+  </main>
+
+<script>
+const password = document.getElementById('password');
+const confirmPassword = document.getElementById('password_chek');
+
+password.addEventListener('input', () => {
+  validatePasswords();
+});
+
+confirmPassword.addEventListener('input', () => {
+  validatePasswords();
+});
+
+const submitButton = document.querySelector('button[type="submit"]');
+ 
+function validatePasswords() {
+  // код проверки паролей
+ 
+  // проверяем, есть ли непустые значения в полях пароля и подтверждения
+  const passwordValue = password.value;
+  const confirmPasswordValue = confirmPassword.value;
+
+if (passwordValue !== confirmPasswordValue) {
+    confirmPassword.setCustomValidity('Пароли не совпадают');
+  } else {
+    confirmPassword.setCustomValidity('');
+  }
+ 
+  if (passwordValue !== '' && confirmPasswordValue !== '') {
+    // если оба поля заполнены, включаем кнопку отправки
+    submitButton.disabled = false;
+  } else {
+    // если хотя бы одно из полей не заполнено, выключаем кнопку отправки
+    submitButton.disabled = true;
+  }
+}
+
+</script>
+
+</body>
+</html>
