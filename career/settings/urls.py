@@ -4,13 +4,17 @@ from django.contrib.auth.models import User
 from rest_framework import routers, serializers, viewsets
 from rest_framework_swagger.views import get_swagger_view
 from django.conf.urls import url
+from django.conf import settings
+from django.conf.urls.static import static
+from django.views.generic import TemplateView, RedirectView
+import os
 
 from api.views_v2 import test1
 from career import views
 
 from career.views import get_image
 
-schema_view = get_swagger_view(title='Pastebin API')
+schema_view = get_swagger_view(title='Career API')
 
 # Serializers define the API representation.
 class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -30,23 +34,29 @@ router.register(r'users', UserViewSet)
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.
 urlpatterns = [
-    # url(r'^$', schema_view),
-    # path('', include(router.urls)),
-    # path('api/', include('rest_framework.urls', namespace='rest_framework')),
+    # Добавляем корневой URL для показа главной страницы
+    path('', TemplateView.as_view(template_name='index.html'), name='index'),
+    # Swagger документация теперь доступна по отдельному URL
+    path('api-docs/', schema_view, name='api-docs'),
+    
     path('admin/', admin.site.urls),
     path('login', views.LoginView.as_view()),
-    # path('api/user/', views.UserView.as_view()),
-    # path('login', include('rest_framework.urls')),
     path('logout', views.Logout.as_view()),
     path("img/<slug:id>/", get_image),
-    # url(r'^api/v1/', include('api.urls')),
-    # url(r'^api/v2/', include('api.urls_v2')),
-
-    # path('', include(router.urls)),
+    
     path('api/v1/', include('api.urls')),
     path('api/v2/', include('api.urls_v2')),
     path('v1/', include('api.urls')),
     path('v2/', include('api.urls_v2')),
-    # path('test1', test1)
+    
+    # Фронтенд-страница, если используется отдельный фронтенд
+    path('app/', TemplateView.as_view(template_name='index.html'), name='frontend'),
 ]
+
+# Добавляем обслуживание статических файлов в режиме разработки
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    # Добавляем обслуживание assets из директории front
+    urlpatterns += static('/assets/', document_root=os.path.join(settings.BASE_DIR, '../front/assets'))
 

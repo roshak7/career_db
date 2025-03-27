@@ -1,5 +1,9 @@
 import os
 from pathlib import Path
+import sys
+
+# Определение версии Python
+PYTHON_VERSION = sys.version_info
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -67,8 +71,10 @@ ROOT_URLCONF = 'settings.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates']
-        ,
+        'DIRS': [
+            os.path.join(BASE_DIR, 'templates'),
+            os.path.join(BASE_DIR, '../front'),
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -86,25 +92,19 @@ WSGI_APPLICATION = 'settings.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': str(os.path.join(BASE_DIR, "db.sqlite3")),
-#     }
-# }
-
+# Используем PostgreSQL
 DATABASES = {
     'default': {
-
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'career_bd',
-        'USER': 'ok1',
-        'PASSWORD': '123',
-        'HOST': '172.16.180.90',
-        # 'HOST': 'localhost',
+        'USER': 'sysadm',
+        'PASSWORD': '1',
+        'HOST': 'localhost',
         'PORT': '5432',
+        'OPTIONS': {
+            'options': '-c timezone=UTC',
+        },
     }
-
 }
 
 # Password validation
@@ -180,7 +180,8 @@ USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+# Отключаем автоматическое преобразование часовых поясов для устранения ошибки AssertionError: database connection isn't set to UTC
+USE_TZ = False
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
